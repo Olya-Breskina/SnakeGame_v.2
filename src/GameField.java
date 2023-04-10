@@ -1,21 +1,21 @@
-import com.oracle.webservices.internal.api.databinding.DatabindingMode;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class GameField  {
+public class GameField {
 
     private final int dotSize;
-    private  final int width;
-    private  final int heeight;
+    private final int width;
+    private final int heeight;
     private ArrayList<Dots> appleList; //список точек яблок
     private LinkedList<Dots> snakeList; //linkedList змея
+
     //конструктор на все
     public GameField(int dotSize, int width, int heeight) {
         this.dotSize = dotSize;
         this.width = width;
         this.heeight = heeight;
     }
+
     public GameField(ArrayList<Dots> appleList) {
         this.appleList = appleList;
     }
@@ -52,18 +52,19 @@ public class GameField  {
         this.snakeList = snakeList;
     }
 
-   public boolean isFieldEmpty(){ // метод пустое поле или нет
-       return true;
-   }
-public Dots putDotOnField(){//метод заданная точка в пределах поля? х не выходит за пределы высоты, у за пределы ширины
+    public boolean isFieldEmpty(int x, int y) { // метод пустое поле или нет
+        return true;
+    }
 
-        return new Dots(x,y);
-}
+    public Dots putDotOnField() {//метод заданная точка в пределах поля? х не выходит за пределы высоты, у за пределы ширины
 
+    }
 
 
     // определить кто тут (яблоко или змея?)
     //метод добавть 1 точку-яблоко, проверка на пустое поле
     // метод setter для змеи, проверка на пустое поле
-
+    public void gameOver() {
+        System.out.println("game over");
+    }
 }
