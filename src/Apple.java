@@ -13,14 +13,29 @@ public class Apple extends Dots implements Runnable {
 
     @Override
     public void run() {
+        for (int i=0; i<10;i++) {
+            try {
+                move();
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                gameField.gameOver();
+            }
+        }
+    }
+
+    public void move() {
+        System.out.println("яблоко до: "+ getX()+" "+ getY());
+        int x;
+        int y;
         do {// создать рандом координаты в предлах поля
-            super.x = new Random().nextInt(20) * gameField.getDotSize();
-            super.y = new Random().nextInt(20) * gameField.getDotSize();
+            x = new Random().nextInt(gameField.getWidth());
+            y = new Random().nextInt(gameField.getHeeight());
         }
         while (gameField.isFieldEmpty(x, y));
         // вызвать метод, что поле не занято: если поле занято перегенерируем, если нет вызываем методы сеттер у Dоts и ставим новые координаты
-       setX(x);
-       setY(y);
+        setX(x);
+        setY(y);
+        System.out.println("яблоко после: "+ getX()+" "+ getY());
     }
 }
 

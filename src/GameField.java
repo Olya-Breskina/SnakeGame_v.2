@@ -1,27 +1,21 @@
-import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class GameField {
 
+    private static final int SNAKE = 1;
+    private static final int APPLE = 0;
     private final int dotSize;
     private final int width;
-    private final int heeight;
-    private ArrayList<Dots> appleList; //список точек яблок
+    private final int height;
+    private List<Apple> appleList; //список точек яблок
     private LinkedList<Dots> snakeList; //linkedList змея
 
     //конструктор на все
-    public GameField(int dotSize, int width, int heeight) {
+    public GameField(int dotSize, int width, int height) {
         this.dotSize = dotSize;
         this.width = width;
-        this.heeight = heeight;
-    }
-
-    public GameField(ArrayList<Dots> appleList) {
-        this.appleList = appleList;
-    }
-
-    public GameField(LinkedList<Dots> snakeList) {
-        this.snakeList = snakeList;
+        this.height = height;
     }
 
     public int getDotSize() {
@@ -33,14 +27,14 @@ public class GameField {
     }
 
     public int getHeeight() {
-        return heeight;
+        return height;
     }
 
-    public ArrayList<Dots> getAppleList() {
+    public List<Apple> getAppleList() {
         return appleList;
     }
 
-    public void setAppleList(ArrayList<Dots> appleList) {
+    public void setAppleList(List<Apple> appleList) {
         this.appleList = appleList;
     }
 
@@ -53,16 +47,38 @@ public class GameField {
     }
 
     public boolean isFieldEmpty(int x, int y) { // метод пустое поле или нет
+
+        if (!isDotOnField(x, y)) return false;
+        for (Dots apple : appleList) {
+            if (apple.getX() == x && apple.getY() == y) return false;
+        }
+        for (Dots snake : snakeList) {
+            if (snake.getX() == x && snake.getY() == y) return false;
+        }
         return true;
     }
 
-    public Dots putDotOnField() {//метод заданная точка в пределах поля? х не выходит за пределы высоты, у за пределы ширины
-
+    public boolean isDotOnField(int x, int y) {//метод заданная точка в пределах поля? х не выходит за пределы высоты, у за пределы ширины
+        return x < getWidth() && y < getHeeight();
     }
 
 
-    // определить кто тут (яблоко или змея?)
-    //метод добавть 1 точку-яблоко, проверка на пустое поле
+    public int getDotOwner(Dots dots) {   // определить кто тут (яблоко или змея?)
+        //0-яблоко; 1-змея
+        for (Dots apple : appleList) {
+            if (dots.equals(apple)) return APPLE;
+        }
+        for (Dots snake : snakeList) {
+            if (dots.equals(snake)) return SNAKE;
+        }
+        throw new IllegalStateException();// если пусто
+    }
+
+    public void addApple(Apple apple) { //метод добавть 1 точку-яблоко, проверка на пустое поле
+        isFieldEmpty(apple.getX(), apple.getY());
+        appleList.add(apple);
+    }
+
     // метод setter для змеи, проверка на пустое поле
     public void gameOver() {
         System.out.println("game over");
