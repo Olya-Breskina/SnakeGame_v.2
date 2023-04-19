@@ -1,10 +1,13 @@
 import java.util.Random;
 
 public class Apple extends Dots implements Runnable {
+    private static final Random RANDOM = new Random();
     private GameField gameField;
 
     public Apple(int x, int y) {
         super(x, y);
+        System.out.println("[>Apple - " + Thread.currentThread().getName()
+                + "]: Hello! I'm Apple! My position - X: " + getX() + ", Y: " + getY());
     }
 
     public void setGameField(GameField gameField) {
@@ -13,29 +16,31 @@ public class Apple extends Dots implements Runnable {
 
     @Override
     public void run() {
-        for (int i=0; i<10;i++) {
-            try {
+        try {
+            while (!Thread.interrupted()) {
+                Thread.sleep(10000);
                 move();
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                gameField.gameOver();
             }
+        } catch (InterruptedException e) {
+            System.out.println("[>Apple - " + Thread.currentThread().getName() + "]: Interrupted!");
+            gameField.gameOver();
+            Thread.currentThread().interrupt();
         }
     }
 
     public void move() {
-        System.out.println("яблоко до: "+ getX()+" "+ getY());
-        int x;
-        int y;
+        int newX;
+        int newY;
         do {// создать рандом координаты в предлах поля
-            x = new Random().nextInt(gameField.getWidth());
-            y = new Random().nextInt(gameField.getHeeight());
+            newX = RANDOM.nextInt(gameField.getWidth() / gameField.getDotSize()) * gameField.getDotSize();
+            newY = RANDOM.nextInt(gameField.getHeeight() / gameField.getDotSize()) * gameField.getDotSize();
         }
-        while (gameField.isFieldEmpty(x, y));
+        while (gameField.isFieldEmpty(getX(), getY()));
         // вызвать метод, что поле не занято: если поле занято перегенерируем, если нет вызываем методы сеттер у Dоts и ставим новые координаты
-        setX(x);
-        setY(y);
-        System.out.println("яблоко после: "+ getX()+" "+ getY());
+        setX(newX);
+        setY(newY);
+        System.out.println("[>Apple - " + Thread.currentThread().getName()
+                + "]: Moved to X: " + getX() + ", Y: " + getY());
     }
 }
 

@@ -59,19 +59,25 @@ public class GameField {
     }
 
     public boolean isDotOnField(int x, int y) {//метод заданная точка в пределах поля? х не выходит за пределы высоты, у за пределы ширины
-        return x < getWidth() && y < getHeeight();
+        return (x > 0 && x < getWidth()) && (y > 0 && y < getHeeight());
     }
 
 
     public int getDotOwner(Dots dots) {   // определить кто тут (яблоко или змея?)
         //0-яблоко; 1-змея
         for (Dots apple : appleList) {
-            if (dots.equals(apple)) return APPLE;
+            if (dots.equals(apple)) {
+                System.out.println("[Game Field] <<< Apple here");
+                return APPLE;
+            }
         }
         for (Dots snake : snakeList) {
-            if (dots.equals(snake)) return SNAKE;
+            if (dots.equals(snake)){
+                System.out.println("[Game Field] <<< Snake here");
+                return SNAKE;
+            }
         }
-        throw new IllegalStateException();// если пусто
+        throw new IllegalStateException("Field {x:" + dots.getX() + ", y:"+ dots.getY() + "} is empty!");// если пусто
     }
 
     public void addApple(Apple apple) { //метод добавть 1 точку-яблоко, проверка на пустое поле
@@ -81,6 +87,13 @@ public class GameField {
 
     // метод setter для змеи, проверка на пустое поле
     public void gameOver() {
-        System.out.println("game over");
+        System.out.println(">------------GAME-OVER------------<");
+        System.out.println("> Your score: " + snakeList.size());
+        System.out.print("> ");
+        for (Dots dots: snakeList) {
+            System.out.print("{X: " + dots.getX() + "; Y: " + dots.getY() + "}");
+        }
+        System.out.println();
+        System.out.println(">---------------------------------<");
     }
 }

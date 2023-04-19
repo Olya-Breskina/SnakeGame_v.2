@@ -4,10 +4,10 @@ public class Main {
     public static void main(String[] args) {
         //  MainWindow mw = new MainWindow();
         // создать поле, яблоки, змею
-        GameField gameField = new GameField(16, 320, 320);
+        GameField gameField = new GameField(10, 320, 320);
         //присмоить яблоки и змею полю
         Snake snake = new Snake(160, 160);
-        Apple apple = new Apple(16, 32);
+        Apple apple = new Apple(100, 160);
         snake.setGameField(gameField);
         apple.setGameField(gameField);
 

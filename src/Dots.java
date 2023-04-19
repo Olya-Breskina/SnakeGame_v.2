@@ -1,6 +1,8 @@
+import java.util.Objects;
+
 public class Dots {
-    public int x;
-    public int y;
+    private int x;
+    private int y;
 
     public Dots(int x, int y) {
         this.x = x;
@@ -23,4 +25,15 @@ public class Dots {
         this.y = y;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Dots dots)) return false;
+        return getX() == dots.getX() && getY() == dots.getY();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getX(), getY());
+    }
 }
