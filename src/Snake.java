@@ -1,52 +1,51 @@
 import java.util.LinkedList;
 
 public class Snake implements Runnable {
-    private final LinkedList<Dots> snake;// тело linkedList
+    private final LinkedList<Dots> body;// тело linkedList
     private final Direction direction;//направление змейки
     private GameField gameField;
 
     public Snake(int x, int y) {// размер змейки
-        this.snake = new LinkedList<>();
-        snake.add(new Dots(x, y));
+        this.body = new LinkedList<>();
+        body.add(new Dots(x, y));
         direction = Direction.LEFT;
-        System.out.println("змейка: " + snake.getFirst().getX() + " " + snake.getFirst().getY());
+        System.out.println("[Snake - " + Thread.currentThread().getName()
+                + "]: Hello! I'm Snake! My position - X: " + getItHead().getX() + ", Y: " + getItHead().getY());
     }
 
     private Dots isItTail() {  //метод хвост
-        return snake.getLast();
+        return body.getLast();
     }
 
     private Dots getItHead() { // метод голова
-        return snake.getFirst();
+        return body.getFirst();
     }
 
     public LinkedList<Dots> snakeBody() {
-        return snake;
+        return body;
     }
 
-    private void eatApple() {//метод добавить кусочек тела
+    private void eatApple() {
+        System.out.println("[Snake - " + Thread.currentThread().getName() + "]: Eating apple...");
         Dots newTail = new Dots(isItTail().getX(), isItTail().getY());
         switch (direction) {
             case UP:
                 moveDown(newTail);
-                System.out.println("змейка: " + snake.getFirst().getX() + " " + snake.getFirst().getY());
                 break;
             case DOWN:
                 moveUp(newTail);
-                System.out.println("змейка: " + snake.getFirst().getX() + " " + snake.getFirst().getY());
                 break;
             case LEFT:
                 moveRight(newTail);
-                System.out.println("змейка: " + snake.getFirst().getX() + " " + snake.getFirst().getY());
                 break;
             case RIGHT:
                 moveLeft(newTail);
-                System.out.println("змейка: " + snake.getFirst().getX() + " " + snake.getFirst().getY());
                 break;
             default:
                 break;
         }
-        snake.addLast(newTail);
+        body.addLast(newTail);
+        System.out.println("[Snake - " + Thread.currentThread().getName() + "]: New size of snake: " + body.size());
     }
 
     public void setGameField(GameField gameField) {
@@ -55,50 +54,87 @@ public class Snake implements Runnable {
 
     @Override
     public void run() {
-        for (int i = 0; i < 10; i++) {
-            try {
+        try {
+            while (!Thread.interrupted()) {
                 Thread.sleep(250);
                 move();
-            } catch (InterruptedException e) {
-                gameField.gameOver();
             }
+        } catch (InterruptedException e) {
+            die();
         }
     }
 
     public void move() {
-        //двигаемся  (прибавляя к координатам размер ячейки)
-        for (Dots dots : snake) {
-            switch (direction) {
-                case UP:
-                    moveUp(dots);
-                    System.out.println("змейка: " + snake.getFirst().getX() + " " + snake.getFirst().getY());
-                    break;
-                case DOWN:
-                    moveDown(dots);
-                    System.out.println("змейка: " + snake.getFirst().getX() + " " + snake.getFirst().getY());
-                    break;
-                case LEFT:
-                    moveLeft(dots);
-                    System.out.println("змейка: " + snake.getFirst().getX() + " " + snake.getFirst().getY());
-                    break;
-                case RIGHT:
-                    moveRight(dots);
-                    System.out.println("змейка: " + snake.getFirst().getX() + " " + snake.getFirst().getY());
-                    break;
-                default:
-                    break;
+        // Создаем точку с координатами головы, которая является возможным следующим шагом змейки
+        Dots nextDot = new Dots(getItHead().getX(), getItHead().getY());
+        // Делаем сдвиг этой точки по направлению змейки
+        doMoveByDirection(nextDot);
+
+        // Проверяем эту точку, можем ли мы на неё встать
+        if (!gameField.isFieldEmpty(nextDot.getX(), nextDot.getY())) {
+
+            // Если змейка вышла за пределы поля, то она может либо умереть, либо перепрыгнуть на другой конец карты.
+            if (!gameField.isDotOnField(nextDot.getX(), nextDot.getY())) {
+                die(); // Сейчас умирает
+                return;
             }
-        }
-        //если встретили яблоко-едим его и увеличиваемся на 1
-        if (!gameField.isFieldEmpty(getItHead().getX(), getItHead().getY())) {
-            int dotOwner = gameField.getDotOwner(getItHead());
+
+            int dotOwner = gameField.getDotOwner(nextDot);
             if (dotOwner == 0) {
+                System.out.println("[Snake - " + Thread.currentThread().getName() + "]: Found apple here!");
                 eatApple();
-                System.out.println("змейка нашла яблоко, змейка : " + snake.getFirst().getX() + " " + snake.getFirst().getY());
-            } else if (dotOwner == 1) gameField.gameOver();
+            } else if (dotOwner == 1) {
+                System.out.println("[Snake - " + Thread.currentThread().getName() + "]: Found snake here! Let me die...");
+                die();
+                return;
+            }
             //throw new IllegalStateException();//если змейка- исключение
         }
+        //двигаемся (прибавляя к координатам размер ячейки)
+        for (Dots dots : body) {
+            doMoveByDirection(dots);
+        }
+        System.out.println("[Snake - " + Thread.currentThread().getName()
+                + "]: Moved to X: " + getItHead().getX() + ", Y: " + getItHead().getY());
     }
+
+    /**
+     * Делает "Движение" для точки (тела змейки) в зависимости от текущего направления.
+     *
+     * @param dots - точка, которую необходимо сдвинуть
+     */
+    private void doMoveByDirection(Dots dots) {
+        switch (direction) {
+            case UP:
+                moveUp(dots);
+                break;
+            case DOWN:
+                moveDown(dots);
+                break;
+            case LEFT:
+                moveLeft(dots);
+                break;
+            case RIGHT:
+                moveRight(dots);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Действия, которые выполняются, когда змейка умирает
+     */
+    private void die() {
+        System.out.println("[Snake - " + Thread.currentThread().getName()
+                + "]: I'm dying... Bye!");
+        gameField.gameOver();
+        Thread.currentThread().interrupt();
+    }
+
+    // |--------------------------------|
+    // | Базовые методы движения Змейки |
+    // |--------------------------------|
 
     public void moveUp(Dots dots) {
         int y = dots.getY();
