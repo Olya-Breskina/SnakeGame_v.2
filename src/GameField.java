@@ -86,14 +86,14 @@ public class GameField {
     }
 
     // метод setter для змеи, проверка на пустое поле
-    public void gameOver() {
-        System.out.println(">------------GAME-OVER------------<");
-        System.out.println("> Your score: " + snakeList.size());
-        System.out.print("> ");
-        for (Dots dots: snakeList) {
-            System.out.print("{X: " + dots.getX() + "; Y: " + dots.getY() + "}");
-        }
-        System.out.println();
-        System.out.println(">---------------------------------<");
-    }
+//    public void gameOver() {
+//        System.out.println(">------------GAME-OVER------------<");
+//        System.out.println("> Your score: " + snakeList.size());
+//        System.out.print("> ");
+//        for (Dots dots: snakeList) {
+//            System.out.print("{X: " + dots.getX() + "; Y: " + dots.getY() + "}");
+//        }
+//        System.out.println();
+//        System.out.println(">---------------------------------<");
+//    }
 }

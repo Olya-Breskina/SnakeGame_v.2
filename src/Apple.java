@@ -21,11 +21,12 @@ public class Apple extends Dots implements Runnable {
                 Thread.sleep(10000);
                 move();
             }
+
         } catch (InterruptedException e) {
             System.out.println("[>Apple - " + Thread.currentThread().getName() + "]: Interrupted!");
-            gameField.gameOver();
             Thread.currentThread().interrupt();
         }
+
     }
 
     public void move() {

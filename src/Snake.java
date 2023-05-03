@@ -1,11 +1,19 @@
+import Observer.Manager;
+import Observer.Producer;
+import event.EatApplyEvent;
+import event.Event;
+import event.SnakeDieEvent;
+
 import java.util.LinkedList;
 
-public class Snake implements Runnable {
+public class Snake implements Runnable, Producer {
+    private final Manager manager;
     private final LinkedList<Dots> body;// тело linkedList
     private final Direction direction;//направление змейки
     private GameField gameField;
 
-    public Snake(int x, int y) {// размер змейки
+    public Snake(int x, int y, Manager manager) {
+        this.manager = manager;// размер змейки
         this.body = new LinkedList<>();
         body.add(new Dots(x, y));
         direction = Direction.LEFT;
@@ -26,6 +34,7 @@ public class Snake implements Runnable {
     }
 
     private void eatApple() {
+        createEvent(new EatApplyEvent());
         System.out.println("[Snake - " + Thread.currentThread().getName() + "]: Eating apple...");
         Dots newTail = new Dots(isItTail().getX(), isItTail().getY());
         switch (direction) {
@@ -125,10 +134,11 @@ public class Snake implements Runnable {
     /**
      * Действия, которые выполняются, когда змейка умирает
      */
+//    будем выдовать событие
     private void die() {
+        createEvent(new SnakeDieEvent());
         System.out.println("[Snake - " + Thread.currentThread().getName()
                 + "]: I'm dying... Bye!");
-        gameField.gameOver();
         Thread.currentThread().interrupt();
     }
 
@@ -158,5 +168,10 @@ public class Snake implements Runnable {
         int x = dots.getX();
         x += gameField.getDotSize();
         dots.setX(x);
+    }
+
+    @Override
+    public void createEvent(Event event) {
+        manager.handleEvent(event);
     }
 }
