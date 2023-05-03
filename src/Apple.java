@@ -17,7 +17,7 @@ public class Apple extends Dots implements Runnable {
     @Override
     public void run() {
         try {
-            while (!Thread.interrupted()) {
+            while (!Thread. currentThread().isInterrupted()) {
                 Thread.sleep(10000);
                 move();
             }

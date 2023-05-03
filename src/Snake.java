@@ -64,7 +64,7 @@ public class Snake implements Runnable, Producer {
     @Override
     public void run() {
         try {
-            while (!Thread.interrupted()) {
+            while (!Thread. currentThread().isInterrupted()) {
                 Thread.sleep(250);
                 move();
             }
