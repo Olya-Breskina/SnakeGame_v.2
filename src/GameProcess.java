@@ -43,6 +43,7 @@ public class GameProcess implements Listener {
     public void handleEvent(Event event) {
         if (event instanceof EatApplyEvent){
             //удалить старое яблоко и создать новое
+            System.out.println(">---метод handleEvent---<");
             threadApple.interrupt();
             threadApple.start();
         }

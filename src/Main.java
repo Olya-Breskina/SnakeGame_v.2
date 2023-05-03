@@ -1,5 +1,9 @@
+import Observer.Listener;
 import Observer.Manager;
 import Observer.ManagerImpl;
+import event.EatApplyEvent;
+import event.Event;
+import event.SnakeDieEvent;
 
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +12,8 @@ public class Main {
     public static void main(String[] args) {
         //  MainWindow mw = new MainWindow();
         ManagerImpl manager=new ManagerImpl();
+        EatApplyEvent eatApplyEvent=new EatApplyEvent();
+        SnakeDieEvent snakeDieEvent=new SnakeDieEvent();
         // создать поле, яблоки, змею
         GameField gameField = new GameField(10, 320, 320);
         //присмоить яблоки и змею полю
@@ -22,6 +28,8 @@ public class Main {
         // игра старт и стоп( поточные)
         GameProcess gameProcess=new GameProcess(List.of(apple),snake);
         gameProcess.gameStart();
+        manager.addListener(eatApplyEvent, gameProcess);
+        manager.addListener(snakeDieEvent, gameProcess);
     }
 }
 
